@@ -3,821 +3,475 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>TYT Takip</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Karla:wght@300;400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{background:#070910;color:#cdd9e5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
 
-:root {
-–bg:      #070910;
-–s1:      #0d1117;
-–s2:      #111820;
-–s3:      #161f2b;
-–border:  #1e2d3d;
-–border2: #253545;
-–text:    #cdd9e5;
-–muted:   #436070;
-–mat:  #3ddc97;
-–tur:  #ff5c6a;
-–sos:  #ffb340;
-–fen:  #58b4ff;
-–accent: #3ddc97;
+:root{
+–bg:#070910;–s1:#0d1117;–s2:#111820;–s3:#161f2b;
+–border:#1e2d3d;–border2:#253545;
+–text:#cdd9e5;–muted:#5a7a8a;
+–mat:#3ddc97;–tur:#ff5c6a;–sos:#ffb340;–fen:#58b4ff;
+–accent:#3ddc97;
 }
 
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(–bg);color:var(–text);font-family:‘Karla’,sans-serif;min-height:100vh;overflow-x:hidden}
-
-/* MOBILE NAV */
 .topbar{
-position:sticky;top:0;z-index:100;
-background:rgba(7,9,16,0.95);
-backdrop-filter:blur(12px);
+position:sticky;top:0;z-index:999;
+background:#070910ee;
+backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
 border-bottom:1px solid var(–border);
-padding:0 16px;
 display:flex;align-items:center;
-height:54px;gap:6px;
+padding:0 12px;height:52px;gap:4px;
 overflow-x:auto;-webkit-overflow-scrolling:touch;
 scrollbar-width:none;
 }
 .topbar::-webkit-scrollbar{display:none}
+.logo{font-weight:900;font-size:1.1rem;color:var(–mat);letter-spacing:.1em;flex-shrink:0;margin-right:8px}
 
-.logo-txt{
-font-family:‘Bebas Neue’,sans-serif;
-font-size:1.3rem;letter-spacing:0.05em;
-color:var(–mat);margin-right:10px;
-flex-shrink:0;
+.tab{
+flex-shrink:0;padding:6px 13px;border-radius:8px;
+font-size:.75rem;font-weight:700;letter-spacing:.03em;
+border:none;background:none;color:var(–muted);cursor:pointer;
+transition:all .15s;white-space:nowrap;
 }
+.tab.on{background:var(–mat);color:#070910}
+.tab:not(.on):active{background:var(–s3);color:var(–text)}
 
-.tab-btn{
-flex-shrink:0;
-padding:6px 14px;border-radius:6px;
-font-family:‘Karla’,sans-serif;
-font-size:0.78rem;font-weight:600;
-border:1px solid transparent;
-background:none;color:var(–muted);
-cursor:pointer;transition:all 0.15s;
-white-space:nowrap;letter-spacing:0.03em;
-}
-.tab-btn:hover{color:var(–text);background:var(–s3);}
-.tab-btn.active{color:var(–bg);background:var(–accent);border-color:var(–accent);}
+.page{display:none;padding:16px 14px 90px;max-width:960px;margin:0 auto}
+.page.on{display:block}
 
-/* MAIN */
-.main{max-width:960px;margin:0 auto;padding:20px 14px 80px;}
+.card{background:var(–s2);border:1px solid var(–border);border-radius:14px;padding:18px;margin-bottom:14px}
+.section-title{font-size:.65rem;letter-spacing:.12em;color:var(–muted);text-transform:uppercase;font-weight:700;margin-bottom:14px}
 
-/* SECTIONS */
-.sec{display:none;}
-.sec.on{display:block;animation:fadeUp 0.2s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.g4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media(min-width:600px){.g4{grid-template-columns:repeat(4,1fr)}}
 
-/* CARDS GRID */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
-@media(max-width:500px){.grid2{grid-template-columns:1fr;}}
+.scard{background:var(–s2);border:1px solid var(–border);border-radius:14px;padding:16px;border-top:3px solid var(–c)}
+.scard-label{font-size:.62rem;letter-spacing:.1em;color:var(–muted);text-transform:uppercase;margin-bottom:8px}
+.scard-net{font-size:2.2rem;font-weight:900;color:var(–c);line-height:1;margin-bottom:4px}
+.scard-avg{font-size:.72rem;color:var(–muted)}
+.trend{display:inline-flex;align-items:center;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:6px}
+.t-up{background:rgba(61,220,151,.12);color:#3ddc97}
+.t-dn{background:rgba(255,92,106,.12);color:#ff5c6a}
+.t-eq{background:rgba(90,122,138,.12);color:var(–muted)}
 
-/* CARD */
-.card{
-background:var(–s2);
-border:1px solid var(–border);
-border-radius:14px;
-padding:18px;
-}
-.card-sm{padding:14px;}
+.total-box{background:linear-gradient(135deg,#0d1117,#161f2b);border:1px solid var(–border2);border-radius:16px;padding:20px;margin-bottom:14px}
+.total-num{font-size:3rem;font-weight:900;color:var(–mat);line-height:1;margin-bottom:4px}
+.total-lbl{font-size:.62rem;letter-spacing:.12em;color:var(–muted);text-transform:uppercase;margin-bottom:8px}
+.prog-track{background:var(–border);border-radius:4px;height:5px;overflow:hidden;margin:8px 0 4px}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(–mat),var(–fen));transition:width .8s ease}
+.prog-info{display:flex;justify-content:space-between;font-size:.72rem;color:var(–muted)}
 
-/* SECTION TITLE */
-.stitle{
-font-family:‘Bebas Neue’,sans-serif;
-font-size:1.4rem;letter-spacing:0.08em;
-color:var(–text);margin-bottom:16px;
-display:flex;align-items:center;gap:10px;
-}
-.stitle::before{content:’’;width:3px;height:22px;background:var(–accent);border-radius:2px;}
+.ch-wrap{position:relative}
+.h140{height:140px}.h180{height:180px}.h220{height:220px}
 
-/* SUBJECT CARDS */
-.subj-card{
-background:var(–s2);border:1px solid var(–border);
-border-radius:14px;padding:18px;
-border-top:2px solid var(–color);
-position:relative;overflow:hidden;
-}
-.subj-card::after{
-content:’’;position:absolute;top:0;right:0;
-width:60px;height:60px;
-background:radial-gradient(circle at top right,var(–color-dim),transparent 70%);
-}
-.subj-label{font-size:0.65rem;letter-spacing:0.12em;color:var(–muted);text-transform:uppercase;margin-bottom:10px;}
-.subj-net{font-family:‘Bebas Neue’,sans-serif;font-size:2.4rem;color:var(–color);line-height:1;margin-bottom:4px;}
-.subj-avg{font-size:0.75rem;color:var(–muted);margin-bottom:8px;}
-.subj-trend{display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:20px;}
-.trend-up{background:rgba(61,220,151,0.1);color:#3ddc97;}
-.trend-dn{background:rgba(255,92,106,0.1);color:#ff5c6a;}
-.trend-eq{background:rgba(67,96,112,0.1);color:var(–muted);}
+.form-card{background:var(–s2);border:1px solid var(–border);border-radius:14px;padding:18px;margin-bottom:12px}
+.form-lbl{font-size:.62rem;letter-spacing:.1em;color:var(–accent);text-transform:uppercase;font-weight:700;margin-bottom:14px}
 
-/* TOTAL BOX */
-.total-box{
-background:linear-gradient(135deg,var(–s1),var(–s3));
-border:1px solid var(–border2);
-border-radius:16px;padding:22px 24px;
-display:flex;align-items:center;gap:20px;flex-wrap:wrap;
-margin-bottom:20px;
-}
-.total-num{font-family:‘Bebas Neue’,sans-serif;font-size:3.5rem;color:var(–mat);line-height:1;}
-.total-info{flex:1;min-width:140px;}
-.total-label{font-size:0.65rem;letter-spacing:0.12em;color:var(–muted);text-transform:uppercase;margin-bottom:4px;}
-.total-sub{font-size:0.75rem;color:var(–muted);margin-top:6px;}
-.prog-track{background:var(–border);border-radius:4px;height:5px;overflow:hidden;margin-top:8px;}
-.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(–mat),var(–fen));transition:width 0.8s cubic-bezier(.4,0,.2,1);}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+label{font-size:.68rem;letter-spacing:.06em;color:var(–muted);text-transform:uppercase;font-weight:600}
 
-/* CHART */
-.chart-wrap{position:relative;}
-.chart-wrap.h160{height:160px;}
-.chart-wrap.h200{height:200px;}
-.chart-wrap.h240{height:240px;}
-
-/* FORM */
-.form-block{
-background:var(–s2);border:1px solid var(–border);
-border-radius:16px;padding:22px;margin-bottom:16px;
-}
-.form-title{font-size:0.65rem;letter-spacing:0.12em;color:var(–accent);text-transform:uppercase;font-weight:700;margin-bottom:14px;}
-
-.fg{display:flex;flex-direction:column;gap:5px;}
-label{font-size:0.7rem;letter-spacing:0.06em;color:var(–muted);text-transform:uppercase;font-weight:600;}
-
-input[type=date],input[type=time],input[type=number],input[type=text],select,textarea{
+input,select,textarea{
 background:var(–bg);border:1px solid var(–border);border-radius:8px;
-color:var(–text);padding:9px 12px;
-font-family:‘Karla’,sans-serif;font-size:0.9rem;
-outline:none;width:100%;transition:border-color 0.15s;
--webkit-appearance:none;
+color:var(–text);padding:10px 12px;
+font-family:inherit;font-size:.88rem;outline:none;width:100%;
+-webkit-appearance:none;transition:border-color .15s;
 }
-input:focus,select:focus,textarea:focus{border-color:var(–accent);}
-input[type=number]::-webkit-inner-spin-button{opacity:0.3;}
+input:focus,select:focus,textarea:focus{border-color:var(–accent)}
 input[type=date]::-webkit-calendar-picker-indicator,
-input[type=time]::-webkit-calendar-picker-indicator{filter:invert(0.4);cursor:pointer;}
+input[type=time]::-webkit-calendar-picker-indicator{filter:invert(.4);cursor:pointer}
 
-.fields3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-.fields2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-@media(max-width:400px){.fields3{grid-template-columns:1fr 1fr;}}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:360px){.g3{grid-template-columns:1fr 1fr}}
 
-.net-box{
-background:var(–bg);border:1px solid var(–border);
-border-radius:8px;padding:9px 12px;
-display:flex;justify-content:space-between;align-items:center;
-margin-top:10px;
-}
-.net-box-label{font-size:0.7rem;color:var(–muted);font-weight:600;letter-spacing:0.06em;}
-.net-box-val{font-family:‘Bebas Neue’,sans-serif;font-size:1.3rem;color:var(–color,var(–mat));}
+.subj-block{border:1px solid var(–border);border-radius:12px;padding:14px;background:var(–s1);border-left:3px solid var(–c);margin-bottom:12px}
+.subj-block-title{font-size:.68rem;letter-spacing:.1em;color:var(–c);text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.net-row{display:flex;justify-content:space-between;align-items:center;background:var(–bg);border:1px solid var(–border);border-radius:8px;padding:9px 12px;margin-top:8px}
+.net-row-lbl{font-size:.68rem;color:var(–muted);font-weight:600;letter-spacing:.06em}
+.net-row-val{font-size:1.2rem;font-weight:900;color:var(–c)}
 
-.subj-section{border:1px solid var(–border);border-radius:12px;padding:14px;background:var(–s1);border-left:3px solid var(–color);}
-.subj-section-title{font-size:0.7rem;letter-spacing:0.1em;color:var(–color);text-transform:uppercase;font-weight:700;margin-bottom:12px;}
+.btn{padding:11px 22px;border-radius:9px;font-size:.86rem;font-weight:700;border:none;cursor:pointer;transition:all .15s;letter-spacing:.04em;font-family:inherit}
+.btn-p{background:var(–mat);color:#070910;box-shadow:0 4px 18px rgba(61,220,151,.2)}
+.btn-p:active{transform:scale(.97)}
+.btn-g{background:var(–s3);color:var(–muted);border:1px solid var(–border)}
+.btn-d{background:rgba(255,92,106,.1);color:#ff5c6a;border:1px solid rgba(255,92,106,.2);padding:5px 10px;font-size:.7rem;border-radius:6px;cursor:pointer;font-family:inherit}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 
-.wrong-topics-input{margin-top:10px;}
-.wrong-topics-input textarea{min-height:60px;resize:none;font-size:0.82rem;line-height:1.5;}
+.topic-item{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:9px;background:var(–s1);border:1px solid var(–border);margin-bottom:6px;cursor:pointer;transition:border-color .15s;user-select:none}
+.topic-item.done{opacity:.4}
+.topic-item.done .t-name{text-decoration:line-through}
+.t-cnt{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:20px;flex-shrink:0}
+.t-name{font-size:.84rem;font-weight:500;flex:1}
+.add-row{display:flex;gap:8px;margin-top:8px}
+.add-row input{flex:1}
+.add-btn{flex-shrink:0;background:transparent;border:1px solid var(–border);border-radius:8px;color:var(–muted);padding:10px 14px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit}
 
-.btn{
-padding:10px 24px;border-radius:8px;
-font-family:‘Karla’,sans-serif;font-size:0.88rem;font-weight:700;
-border:none;cursor:pointer;transition:all 0.15s;
-letter-spacing:0.04em;
-}
-.btn-primary{background:var(–mat);color:#070910;box-shadow:0 4px 20px rgba(61,220,151,0.2);}
-.btn-primary:hover{opacity:0.9;transform:translateY(-1px);}
-.btn-primary:active{transform:scale(0.98);}
-.btn-ghost{background:var(–s3);color:var(–muted);border:1px solid var(–border);}
-.btn-ghost:hover{color:var(–text);}
-.btn-danger{background:rgba(255,92,106,0.1);color:#ff5c6a;border:1px solid rgba(255,92,106,0.2);padding:5px 10px;font-size:0.72rem;}
-.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.goal-item{background:var(–s2);border:1px solid var(–border);border-radius:12px;padding:16px;margin-bottom:10px;border-left:3px solid var(–c)}
+.goal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.goal-subj{font-size:.7rem;letter-spacing:.1em;color:var(–c);text-transform:uppercase;font-weight:700}
+.goal-nums{font-size:.78rem;color:var(–muted)}
+.goal-nums b{color:var(–text)}
+.gbar-track{background:var(–border);border-radius:4px;height:6px;overflow:hidden}
+.gbar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.goal-status{font-size:.7rem;color:var(–muted);margin-top:6px}
 
-/* TOPICS */
-.topic-item{
-display:flex;align-items:center;gap:10px;
-padding:10px 12px;border-radius:8px;
-background:var(–s1);border:1px solid var(–border);
-margin-bottom:6px;cursor:pointer;
-transition:border-color 0.15s;
-user-select:none;
-}
-.topic-item:hover{border-color:var(–color,var(–accent));}
-.topic-item.done{opacity:0.4;}
-.topic-item.done .topic-name{text-decoration:line-through;}
-.topic-count{
-background:var(–color-dim,rgba(61,220,151,0.1));
-color:var(–color,var(–mat));
-font-size:0.7rem;font-weight:700;
-padding:2px 7px;border-radius:20px;
-flex-shrink:0;
-}
-.topic-name{font-size:0.85rem;font-weight:500;flex:1;}
-.topic-check{color:var(–color,var(–mat));font-size:0.9rem;flex-shrink:0;}
+.sg4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+@media(min-width:500px){.sg4{grid-template-columns:repeat(4,1fr)}}
+.st-card{background:var(–s2);border:1px solid var(–border);border-radius:12px;padding:14px;border-left:3px solid var(–c);text-align:center}
+.st-subj{font-size:.62rem;letter-spacing:.1em;color:var(–muted);text-transform:uppercase;margin-bottom:6px}
+.st-total{font-size:1.6rem;font-weight:900;color:var(–c);line-height:1}
+.st-unit{font-size:.68rem;color:var(–muted);margin-top:2px}
 
-/* STUDY TIMER */
-.study-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px;}
-.study-card{
-background:var(–s2);border:1px solid var(–border);
-border-radius:12px;padding:14px;
-border-left:3px solid var(–color);
-text-align:center;
-}
-.study-subject{font-size:0.65rem;letter-spacing:0.1em;color:var(–muted);text-transform:uppercase;margin-bottom:6px;}
-.study-total{font-family:‘Bebas Neue’,sans-serif;font-size:1.8rem;color:var(–color);line-height:1;}
-.study-unit{font-size:0.7rem;color:var(–muted);}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:.78rem;min-width:360px}
+th{text-align:left;color:var(–muted);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:0 8px 10px;font-weight:700;border-bottom:1px solid var(–border)}
+td{padding:10px 8px;border-bottom:1px solid rgba(30,45,61,.5);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-weight:800;font-size:.8rem}
 
-/* GOALS */
-.goal-item{
-background:var(–s2);border:1px solid var(–border);
-border-radius:12px;padding:16px;margin-bottom:10px;
-border-left:3px solid var(–color);
-}
-.goal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.goal-subject{font-size:0.75rem;letter-spacing:0.1em;color:var(–color);text-transform:uppercase;font-weight:700;}
-.goal-nums{font-size:0.8rem;color:var(–muted);}
-.goal-nums span{color:var(–text);font-weight:600;}
-.goal-bar-track{background:var(–border);border-radius:4px;height:6px;overflow:hidden;}
-.goal-bar-fill{height:100%;border-radius:4px;background:var(–color);transition:width 0.6s ease;}
-.goal-status{font-size:0.72rem;color:var(–muted);margin-top:6px;}
+.empty{text-align:center;padding:36px 20px;color:var(–muted);font-size:.84rem}
+.empty-icon{font-size:2rem;margin-bottom:8px;opacity:.3}
 
-/* HISTORY TABLE */
-.tbl-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:0.8rem;}
-th{text-align:left;color:var(–muted);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;padding:0 8px 10px;font-weight:700;border-bottom:1px solid var(–border);}
-td{padding:10px 8px;border-bottom:1px solid rgba(30,45,61,0.5);vertical-align:top;}
-tr:hover td{background:rgba(255,255,255,0.01);}
-tr:last-child td{border-bottom:none;}
-.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-weight:700;font-family:‘Bebas Neue’,sans-serif;font-size:0.85rem;}
-.pill-good{background:rgba(61,220,151,0.1);color:#3ddc97;}
-.pill-ok{background:rgba(255,179,64,0.1);color:#ffb340;}
-.pill-bad{background:rgba(255,92,106,0.1);color:#ff5c6a;}
-
-.empty{text-align:center;padding:40px;color:var(–muted);font-size:0.85rem;}
-.empty-icon{font-size:2rem;margin-bottom:8px;opacity:0.3;}
-
-/* TOAST */
-.toast{
-position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);
-background:var(–s2);border:1px solid var(–mat);
-border-radius:10px;padding:10px 20px;
-font-size:0.82rem;color:var(–mat);font-weight:600;
-opacity:0;transition:all 0.3s ease;z-index:999;
-pointer-events:none;white-space:nowrap;
-}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-
-/* CONFETTI */
-.confetti-piece{
-position:fixed;width:8px;height:8px;border-radius:2px;
-pointer-events:none;z-index:9999;
-animation:confettiFall 1.5s ease-in forwards;
-}
-@keyframes confettiFall{
-0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
-100%{transform:translateY(100vh) rotate(720deg);opacity:0;}
-}
-
-.mb16{margin-bottom:16px;}
-.mb8{margin-bottom:8px;}
-.mt8{margin-top:8px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);background:var(–s2);border:1px solid var(–mat);border-radius:10px;padding:10px 20px;font-size:.82rem;color:var(–mat);font-weight:700;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.confetti-p{position:fixed;width:7px;height:7px;border-radius:2px;pointer-events:none;z-index:9998;animation:cf 1.4s ease-in forwards}
+@keyframes cf{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
 </style>
 
 </head>
 <body>
 
 <nav class="topbar">
-  <span class="logo-txt">TYT</span>
-  <button class="tab-btn active" onclick="go('dash',this)">📊 Dashboard</button>
-  <button class="tab-btn" onclick="go('giris',this)">➕ Giriş</button>
-  <button class="tab-btn" onclick="go('konular',this)">❌ Konular</button>
-  <button class="tab-btn" onclick="go('hedef',this)">🎯 Hedefler</button>
-  <button class="tab-btn" onclick="go('calisma',this)">⏱️ Çalışma</button>
-  <button class="tab-btn" onclick="go('gecmis',this)">📋 Geçmiş</button>
+  <span class="logo">TYT</span>
+  <button class="tab on" data-page="dash">📊 Dashboard</button>
+  <button class="tab" data-page="giris">➕ Giriş</button>
+  <button class="tab" data-page="konular">❌ Konular</button>
+  <button class="tab" data-page="hedef">🎯 Hedefler</button>
+  <button class="tab" data-page="calisma">⏱️ Çalışma</button>
+  <button class="tab" data-page="gecmis">📋 Geçmiş</button>
 </nav>
 
-<div class="main">
-
-  <!-- DASHBOARD -->
-
-  <div class="sec on" id="sec-dash">
-    <div class="total-box">
-      <div>
-        <div class="total-label">Son Deneme Toplam Net</div>
-        <div class="total-num" id="d-total">—</div>
-      </div>
-      <div class="total-info">
-        <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--muted)">
-          <span>Hedefe İlerleme</span><span id="d-pct">—</span>
-        </div>
-        <div class="prog-track"><div class="prog-fill" id="d-prog" style="width:0%"></div></div>
-        <div class="total-sub">Hedef: <span id="d-target-label">90</span> net</div>
-      </div>
+<div class="page on" id="p-dash">
+  <div class="total-box">
+    <div class="total-lbl">Son Deneme Toplam Net</div>
+    <div class="total-num" id="d-total">—</div>
+    <div class="prog-info"><span>Hedefe İlerleme</span><span id="d-pct">—</span></div>
+    <div class="prog-track"><div class="prog-fill" id="d-prog" style="width:0%"></div></div>
+    <div style="font-size:.72rem;color:var(--muted)">Hedef: <span id="d-glbl">—</span> net</div>
+  </div>
+  <div class="g4" id="d-cards"></div>
+  <div class="card">
+    <div class="section-title">Net Gelişim — Tüm Dersler</div>
+    <div class="ch-wrap h220"><canvas id="c-overview"></canvas></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="card">
+      <div class="section-title">Son 7 Gün Çalışma</div>
+      <div class="ch-wrap h140"><canvas id="c-study7"></canvas></div>
     </div>
-    <div class="grid4 mb16" id="d-cards"></div>
-    <div class="card mb16">
-      <div style="font-size:0.65rem;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;font-weight:700;">NET GELİŞİM — TÜM DERSLER</div>
-      <div class="chart-wrap h200"><canvas id="d-overview"></canvas></div>
-    </div>
-    <div class="grid2">
-      <div class="card">
-        <div style="font-size:0.65rem;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;font-weight:700;">SON 7 GÜN ÇALIŞMA</div>
-        <div class="chart-wrap h160"><canvas id="d-study"></canvas></div>
-      </div>
-      <div class="card">
-        <div style="font-size:0.65rem;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;font-weight:700;">EN ÇOK YANLIŞ KONULAR</div>
-        <div id="d-weaklist"></div>
-      </div>
+    <div class="card">
+      <div class="section-title">En Çok Yanlış</div>
+      <div id="d-weaklist"></div>
     </div>
   </div>
-
-  <!-- GİRİŞ -->
-
-  <div class="sec" id="sec-giris">
-    <div class="stitle">Deneme Giriş</div>
-    <div class="form-block">
-      <div class="form-title">Deneme Bilgileri</div>
-      <div class="fields2">
-        <div class="fg"><label>Tarih</label><input type="date" id="g-date"></div>
-        <div class="fg"><label>Deneme Adı (opsiyonel)</label><input type="text" id="g-name" placeholder="Örn: TYT Deneme 5"></div>
-      </div>
-    </div>
-
-```
-<div id="subj-forms"></div>
-
-<div class="form-block">
-  <div class="form-title">⏱️ Bu Gün Çalışma Süreleri (dakika)</div>
-  <div class="fields2" id="study-inputs"></div>
 </div>
 
-<div class="btn-row">
-  <button class="btn btn-primary" onclick="saveEntry()">💾 Kaydet</button>
-  <button class="btn btn-ghost" onclick="clearForm()">Temizle</button>
+<div class="page" id="p-giris">
+  <div class="form-card">
+    <div class="form-lbl">Deneme Bilgileri</div>
+    <div class="g2">
+      <div class="fg"><label>Tarih</label><input type="date" id="g-date"></div>
+      <div class="fg"><label>Deneme Adı</label><input type="text" id="g-name" placeholder="Opsiyonel"></div>
+    </div>
+  </div>
+  <div id="subj-forms"></div>
+  <div class="form-card">
+    <div class="form-lbl">⏱️ Çalışma Süreleri (dakika)</div>
+    <div class="g2" id="study-inputs"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-p" onclick="saveEntry()">💾 Kaydet</button>
+    <button class="btn btn-g" onclick="clearForm()">Temizle</button>
+  </div>
 </div>
-```
 
+<div class="page" id="p-konular">
+  <div id="konular-wrap"></div>
+</div>
+
+<div class="page" id="p-hedef">
+  <div class="form-card">
+    <div class="form-lbl">Hedef Net Belirle</div>
+    <div class="g2" id="goal-inputs"></div>
+    <div class="btn-row"><button class="btn btn-p" onclick="saveGoals()">Kaydet</button></div>
   </div>
+  <div id="goals-display"></div>
+</div>
 
-  <!-- KONULAR -->
-
-  <div class="sec" id="sec-konular">
-    <div class="stitle">Zayıf Konular</div>
-    <div id="konular-content"></div>
+<div class="page" id="p-calisma">
+  <div class="sg4" id="study-totals"></div>
+  <div class="card">
+    <div class="section-title">14 Günlük Çalışma (dakika)</div>
+    <div class="ch-wrap h220"><canvas id="c-study14"></canvas></div>
   </div>
+</div>
 
-  <!-- HEDEFLER -->
-
-  <div class="sec" id="sec-hedef">
-    <div class="stitle">Hedefler</div>
-    <div class="form-block mb16">
-      <div class="form-title">Hedef Net Belirle</div>
-      <div class="fields2" id="goal-inputs"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveGoals()">Hedefleri Kaydet</button>
-      </div>
-    </div>
-    <div id="goals-display"></div>
+<div class="page" id="p-gecmis">
+  <div class="card">
+    <div class="tbl-wrap" id="hist-tbl"></div>
   </div>
-
-  <!-- ÇALIŞMA -->
-
-  <div class="sec" id="sec-calisma">
-    <div class="stitle">Çalışma Takibi</div>
-    <div class="study-grid" id="study-totals"></div>
-    <div class="card">
-      <div style="font-size:0.65rem;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;font-weight:700;">HAFTALIK ÇALIŞMA (DAKİKA)</div>
-      <div class="chart-wrap h200"><canvas id="study-chart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- GEÇMİŞ -->
-
-  <div class="sec" id="sec-gecmis">
-    <div class="stitle">Deneme Geçmişi</div>
-    <div class="card">
-      <div class="tbl-wrap" id="history-table"></div>
-    </div>
-  </div>
-
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────────────────────────
-const S = [
-  {key:'mat',label:'Matematik',      short:'Mat', color:'#3ddc97',dim:'rgba(61,220,151,0.08)',  max:40},
-  {key:'tur',label:'Türkçe',         short:'Tür', color:'#ff5c6a',dim:'rgba(255,92,106,0.08)',  max:40},
-  {key:'sos',label:'Sosyal Bilimler',short:'Sos', color:'#ffb340',dim:'rgba(255,179,64,0.08)',  max:20},
-  {key:'fen',label:'Fen Bilimleri',  short:'Fen', color:'#58b4ff',dim:'rgba(88,180,255,0.08)',  max:20},
+const S=[
+  {key:'mat',label:'Matematik',short:'Mat',c:'#3ddc97',dim:'rgba(61,220,151,.1)',max:40},
+  {key:'tur',label:'Türkçe',short:'Tür',c:'#ff5c6a',dim:'rgba(255,92,106,.1)',max:40},
+  {key:'sos',label:'Sosyal',short:'Sos',c:'#ffb340',dim:'rgba(255,179,64,.1)',max:20},
+  {key:'fen',label:'Fen',short:'Fen',c:'#58b4ff',dim:'rgba(88,180,255,.1)',max:20},
 ];
+const KEY='tyt_pro_v2';
+const CH={};
 
-const STORE = 'tyt_pro_v1';
-const charts = {};
+function ld(){try{return JSON.parse(localStorage.getItem(KEY)||'null')||def();}catch(e){return def();}}
+function def(){return{entries:[],topics:{mat:[],tur:[],sos:[],fen:[]},goals:{mat:25,tur:28,sos:12,fen:12},study:[]};}
+function sv(d){try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}}
 
-// ── DATA ────────────────────────────────────────────────────────────────────
-function load(){
-  try{ return JSON.parse(localStorage.getItem(STORE)||'null') || {
-    entries:[], topics:{mat:[],tur:[],sos:[],fen:[]},
-    goals:{mat:25,tur:28,sos:12,fen:12}, study:[]
-  }; }catch(e){ return {entries:[],topics:{mat:[],tur:[],sos:[],fen:[]},goals:{mat:25,tur:28,sos:12,fen:12},study:[]}; }
-}
-function save(d){ try{localStorage.setItem(STORE,JSON.stringify(d));}catch(e){} }
+// TABS
+document.querySelectorAll('.tab').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var pg=btn.dataset.page;
+    document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+    btn.classList.add('on');
+    document.getElementById('p-'+pg).classList.add('on');
+    if(pg==='dash')renderDash();
+    if(pg==='konular')renderKonular();
+    if(pg==='hedef')renderHedef();
+    if(pg==='calisma')renderCalisma();
+    if(pg==='gecmis')renderGecmis();
+  });
+});
 
-// ── NAV ─────────────────────────────────────────────────────────────────────
-function go(id, btn){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('sec-'+id).classList.add('on');
-  if(btn) btn.classList.add('active');
-  if(id==='dash') renderDash();
-  if(id==='konular') renderKonular();
-  if(id==='hedef') renderHedef();
-  if(id==='calisma') renderCalisma();
-  if(id==='gecmis') renderGecmis();
-}
-
-// ── BUILD FORMS ──────────────────────────────────────────────────────────────
 function buildForms(){
-  document.getElementById('g-date').value = new Date().toISOString().split('T')[0];
-
-  // Subject forms
-  document.getElementById('subj-forms').innerHTML = S.map(s=>`
-    <div class="form-block">
-      <div class="subj-section" style="--color:${s.color};--color-dim:${s.dim}">
-        <div class="subj-section-title">${s.label} <span style="opacity:0.5;font-size:0.6rem">(Max ${s.max})</span></div>
-        <div class="fields3">
-          <div class="fg"><label>Doğru</label><input type="number" id="${s.key}-d" min="0" max="${s.max}" placeholder="0" oninput="calcNet('${s.key}')"></div>
-          <div class="fg"><label>Yanlış</label><input type="number" id="${s.key}-y" min="0" max="${s.max}" placeholder="0" oninput="calcNet('${s.key}')"></div>
-          <div class="fg"><label>Boş</label><input type="number" id="${s.key}-b" min="0" max="${s.max}" placeholder="0"></div>
-        </div>
-        <div class="net-box" style="--color:${s.color}">
-          <span class="net-box-label">NET</span>
-          <span class="net-box-val" id="${s.key}-net">0.00</span>
-        </div>
-        <div class="wrong-topics-input">
-          <div style="font-size:0.65rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;font-weight:600;">Bu denemede yanlış yaptığın konular</div>
-          <textarea id="${s.key}-wrong" placeholder="Örn: Problemler, Üslü Sayılar, Paragraf..."></textarea>
+  document.getElementById('g-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('subj-forms').innerHTML=S.map(function(s){return `
+    <div class="subj-block" style="--c:${s.c}">
+      <div class="subj-block-title">${s.label} <span style="opacity:.4;font-size:.58rem">(Max ${s.max})</span></div>
+      <div class="g3">
+        <div class="fg" style="margin:0"><label>Doğru</label><input type="number" id="${s.key}-d" min="0" max="${s.max}" placeholder="0" oninput="calcNet('${s.key}')"></div>
+        <div class="fg" style="margin:0"><label>Yanlış</label><input type="number" id="${s.key}-y" min="0" max="${s.max}" placeholder="0" oninput="calcNet('${s.key}')"></div>
+        <div class="fg" style="margin:0"><label>Boş</label><input type="number" id="${s.key}-b" min="0" max="${s.max}" placeholder="0"></div>
+      </div>
+      <div class="net-row" style="--c:${s.c}">
+        <span class="net-row-lbl">NET</span>
+        <span class="net-row-val" id="${s.key}-net">0.00</span>
+      </div>
+      <div style="margin-top:10px">
+        <label style="display:block;margin-bottom:5px">Yanlış yaptığın konular</label>
+        <textarea id="${s.key}-wrong" placeholder="Virgülle yaz: Problemler, Üslü Sayılar..." style="min-height:56px;resize:none;font-size:.82rem"></textarea>
 
 ```
-    </div>
   </div>
-</div>
+</div>`;}).join('');
 ```
 
-`).join(’’);
+document.getElementById(‘study-inputs’).innerHTML=S.map(function(s){return ` <div class="fg"><label style="color:${s.c}">${s.label}</label><input type="number" id="study-${s.key}" min="0" placeholder="0 dk"></div>`;}).join(’’);
 
-// Study inputs
-document.getElementById(‘study-inputs’).innerHTML = S.map(s=>`<div class="fg"> <label style="color:${s.color}">${s.label}</label> <input type="number" id="study-${s.key}" min="0" placeholder="0 dk"> </div>`).join(’’);
-
-// Goal inputs
-const d = load();
-document.getElementById(‘goal-inputs’).innerHTML = S.map(s=>`<div class="fg"> <label style="color:${s.color}">${s.label} Hedef Net</label> <input type="number" id="goal-${s.key}" min="0" max="${s.max}" value="${d.goals[s.key]||0}"> </div>`).join(’’);
+var d=ld();
+document.getElementById(‘goal-inputs’).innerHTML=S.map(function(s){return ` <div class="fg"><label style="color:${s.c}">${s.label}</label><input type="number" id="goal-${s.key}" min="0" max="${s.max}" value="${d.goals[s.key]||0}"></div>`;}).join(’’);
 }
 
-function calcNet(key){
-const d = +document.getElementById(`${key}-d`).value||0;
-const y = +document.getElementById(`${key}-y`).value||0;
-document.getElementById(`${key}-net`).textContent = (d-y/4).toFixed(2);
+function calcNet(k){
+var dv=+(document.getElementById(k+’-d’).value)||0;
+var yv=+(document.getElementById(k+’-y’).value)||0;
+document.getElementById(k+’-net’).textContent=(dv-yv/4).toFixed(2);
 }
 
 function clearForm(){
-S.forEach(s=>{
-[‘d’,‘y’,‘b’].forEach(f=>{ document.getElementById(`${s.key}-${f}`).value=’’; });
-document.getElementById(`${s.key}-net`).textContent=‘0.00’;
-document.getElementById(`${s.key}-wrong`).value=’’;
-document.getElementById(`study-${s.key}`).value=’’;
+S.forEach(function(s){
+[‘d’,‘y’,‘b’].forEach(function(f){document.getElementById(s.key+’-’+f).value=’’;});
+document.getElementById(s.key+’-net’).textContent=‘0.00’;
+document.getElementById(s.key+’-wrong’).value=’’;
+document.getElementById(‘study-’+s.key).value=’’;
 });
 }
 
-// ── SAVE ENTRY ───────────────────────────────────────────────────────────────
 function saveEntry(){
-const date = document.getElementById(‘g-date’).value;
-const name = document.getElementById(‘g-name’).value.trim();
-if(!date){ toast(‘Tarih seç!’); return; }
-
-const d = load();
-const entry = {date, name, id:Date.now()};
-
-S.forEach(s=>{
-const dg = +document.getElementById(`${s.key}-d`).value||0;
-const yg = +document.getElementById(`${s.key}-y`).value||0;
-const bg = +document.getElementById(`${s.key}-b`).value||0;
-const net = +(dg - yg/4).toFixed(2);
-const wrong = document.getElementById(`${s.key}-wrong`).value.trim();
-entry[s.key] = {d:dg, y:yg, b:bg, net};
-
-```
-// Add wrong topics
+var date=document.getElementById(‘g-date’).value;
+var name=document.getElementById(‘g-name’).value.trim();
+if(!date){toast(‘Tarih seç!’);return;}
+var d=ld();
+var entry={date:date,name:name,id:Date.now()};
+S.forEach(function(s){
+var dg=+(document.getElementById(s.key+’-d’).value)||0;
+var yg=+(document.getElementById(s.key+’-y’).value)||0;
+var bg=+(document.getElementById(s.key+’-b’).value)||0;
+entry[s.key]={d:dg,y:yg,b:bg,net:+(dg-yg/4).toFixed(2)};
+var wrong=document.getElementById(s.key+’-wrong’).value.trim();
 if(wrong){
-  wrong.split(/[,،\n]+/).map(t=>t.trim()).filter(Boolean).forEach(topic=>{
-    const existing = d.topics[s.key].find(t=>t.text.toLowerCase()===topic.toLowerCase());
-    if(existing){ existing.count = (existing.count||1)+1; }
-    else{ d.topics[s.key].push({text:topic, count:1, done:false, id:Date.now()+Math.random()}); }
-  });
-}
-
-// Save study time
-const st = +document.getElementById(`study-${s.key}`).value||0;
-if(st>0){
-  d.study.push({date, subject:s.key, minutes:st});
-}
-```
-
+wrong.split(/[,،\n]+/).map(function(t){return t.trim();}).filter(Boolean).forEach(function(topic){
+var ex=d.topics[s.key].find(function(t){return t.text.toLowerCase()===topic.toLowerCase();});
+if(ex){ex.count=(ex.count||1)+1;}
+else{d.topics[s.key].push({text:topic,count:1,done:false,id:Date.now()+Math.random()});}
 });
-
+}
+var st=+(document.getElementById(‘study-’+s.key).value)||0;
+if(st>0)d.study.push({date:date,subject:s.key,minutes:st});
+});
 d.entries.push(entry);
-d.entries.sort((a,b)=>a.date.localeCompare(b.date));
-save(d);
-clearForm();
-toast(‘✓ Deneme kaydedildi!’);
-renderDash();
-
-// Check goal reached
-const total = S.reduce((acc,s)=>acc+(entry[s.key]?.net||0),0);
-const totalGoal = S.reduce((acc,s)=>acc+(d.goals[s.key]||0),0);
-if(total >= totalGoal) confetti();
+d.entries.sort(function(a,b){return a.date.localeCompare(b.date);});
+sv(d);clearForm();toast(‘✓ Kaydedildi!’);
+var total=S.reduce(function(a,s){return a+(entry[s.key]?entry[s.key].net:0);},0);
+var tGoal=S.reduce(function(a,s){return a+(d.goals[s.key]||0);},0);
+if(total>=tGoal)confetti();
 }
 
-// ── DASHBOARD ────────────────────────────────────────────────────────────────
 function renderDash(){
-const d = load();
-const entries = d.entries;
-const last = entries[entries.length-1];
-const totalGoal = S.reduce((acc,s)=>acc+(d.goals[s.key]||0),0);
-
-// Total net
+var d=ld();var E=d.entries;var last=E[E.length-1];
+var tGoal=S.reduce(function(a,s){return a+(d.goals[s.key]||0);},0);
+document.getElementById(‘d-glbl’).textContent=tGoal;
 if(last){
-const total = S.reduce((acc,s)=>acc+(last[s.key]?.net||0),0);
-document.getElementById(‘d-total’).textContent = total.toFixed(1);
-const pct = Math.min(100,Math.round((total/totalGoal)*100));
-document.getElementById(‘d-pct’).textContent = ‘%’+pct;
-document.getElementById(‘d-prog’).style.width = pct+’%’;
+var total=S.reduce(function(a,s){return a+(last[s.key]?last[s.key].net:0);},0);
+document.getElementById(‘d-total’).textContent=total.toFixed(1);
+var pct=Math.min(100,Math.round(total/tGoal*100));
+document.getElementById(‘d-pct’).textContent=’%’+pct;
+document.getElementById(‘d-prog’).style.width=pct+’%’;
 } else {
-document.getElementById(‘d-total’).textContent = ‘—’;
-document.getElementById(‘d-pct’).textContent = ‘—’;
+document.getElementById(‘d-total’).textContent=’—’;
+document.getElementById(‘d-pct’).textContent=’—’;
 }
-document.getElementById(‘d-target-label’).textContent = totalGoal;
 
-// Subject cards
-document.getElementById(‘d-cards’).innerHTML = S.map(s=>{
-const nets = entries.map(e=>e[s.key]?.net).filter(n=>n!=null);
-const lastNet = nets.length ? nets[nets.length-1] : null;
-const avg = nets.length ? (nets.reduce((a,b)=>a+b,0)/nets.length) : null;
-const prev = nets.length>1 ? nets[nets.length-2] : null;
-let trend = `<span class="subj-trend trend-eq">— veri yok</span>`;
-if(lastNet!==null && prev!==null){
-const diff = (lastNet-prev).toFixed(1);
-if(lastNet>prev) trend=`<span class="subj-trend trend-up">↑ +${diff}</span>`;
-else if(lastNet<prev) trend=`<span class="subj-trend trend-dn">↓ ${diff}</span>`;
-else trend=`<span class="subj-trend trend-eq">→ Sabit</span>`;
+document.getElementById(‘d-cards’).innerHTML=S.map(function(s){
+var nets=E.map(function(e){return e[s.key]?e[s.key].net:null;}).filter(function(n){return n!=null;});
+var ln=nets.length?nets[nets.length-1]:null;
+var avg=nets.length?(nets.reduce(function(a,b){return a+b;},0)/nets.length).toFixed(1):null;
+var prev=nets.length>1?nets[nets.length-2]:null;
+var tr=’<span class="trend t-eq">— veri yok</span>’;
+if(ln!==null&&prev!==null){
+var diff=(ln-prev).toFixed(1);
+tr=ln>prev?’<span class="trend t-up">↑ +’+diff+’</span>’:ln<prev?’<span class="trend t-dn">↓ ‘+diff+’</span>’:’<span class="trend t-eq">→ Sabit</span>’;
 }
-return `<div class="subj-card" style="--color:${s.color};--color-dim:${s.dim}"> <div class="subj-label">${s.label}</div> <div class="subj-net">${lastNet!==null?lastNet.toFixed(1):'—'}</div> <div class="subj-avg">Ort: ${avg!==null?avg.toFixed(1):'—'} · Max: ${s.max}</div> ${trend} </div>`;
+return ‘<div class="scard" style="--c:'+s.c+'"><div class="scard-label">’+s.label+’</div><div class="scard-net">’+(ln!==null?ln.toFixed(1):’—’)+’</div><div class="scard-avg">Ort: ‘+(avg||’—’)+’ / ‘+s.max+’</div>’+tr+’</div>’;
 }).join(’’);
 
-// Overview chart
-if(charts.overview) charts.overview.destroy();
-const ctx = document.getElementById(‘d-overview’);
-const allDates = […new Set(entries.map(e=>e.date))];
-charts.overview = new Chart(ctx,{
+if(CH.ov)CH.ov.destroy();
+var dates=[…new Set(E.map(function(e){return e.date;}))];
+CH.ov=new Chart(document.getElementById(‘c-overview’),{
 type:‘line’,
-data:{
-labels: allDates.map(fmtDate),
-datasets: S.map(s=>({
-label:s.short,
-data: allDates.map(dt=>{ const e=entries.find(x=>x.date===dt); return e?e[s.key]?.net:null; }),
-borderColor:s.color,backgroundColor:‘transparent’,
-borderWidth:2,pointRadius:3,pointBackgroundColor:s.color,
-tension:0.35,spanGaps:true,
-}))
-},
-options:{
-responsive:true,maintainAspectRatio:false,
-plugins:{legend:{labels:{color:’#436070’,font:{size:10,family:‘Karla’}}}},
-scales:{
-x:{ticks:{color:’#436070’,font:{size:9}},grid:{color:’#1e2d3d’}},
-y:{min:0,ticks:{color:’#436070’,font:{size:9}},grid:{color:’#1e2d3d’}}
-}
-}
+data:{labels:dates.map(fmtD),datasets:S.map(function(s){return{label:s.short,data:dates.map(function(dt){var e=E.find(function(x){return x.date===dt;});return e&&e[s.key]?e[s.key].net:null;}),borderColor:s.c,backgroundColor:‘transparent’,borderWidth:2,pointRadius:3,pointBackgroundColor:s.c,tension:.35,spanGaps:true};})},
+options:cOpts()
 });
 
-// Study mini chart
-if(charts.dstudy) charts.dstudy.destroy();
-const last7 = getLast7Dates();
-const studyCtx = document.getElementById(‘d-study’);
-charts.dstudy = new Chart(studyCtx,{
+if(CH.s7)CH.s7.destroy();
+var l7=last7();
+CH.s7=new Chart(document.getElementById(‘c-study7’),{
 type:‘bar’,
-data:{
-labels:last7.map(fmtDate),
-datasets:S.map(s=>({
-label:s.short,
-data:last7.map(dt=>d.study.filter(x=>x.date===dt&&x.subject===s.key).reduce((a,b)=>a+b.minutes,0)),
-backgroundColor:s.color+‘99’,borderRadius:4,
-}))
-},
-options:{
-responsive:true,maintainAspectRatio:false,
-plugins:{legend:{labels:{color:’#436070’,font:{size:10}}}},
-scales:{
-x:{stacked:true,ticks:{color:’#436070’,font:{size:9}},grid:{display:false}},
-y:{stacked:true,ticks:{color:’#436070’,font:{size:9}},grid:{color:’#1e2d3d’}}
-}
-}
+data:{labels:l7.map(fmtD),datasets:S.map(function(s){return{label:s.short,data:l7.map(function(dt){return d.study.filter(function(x){return x.date===dt&&x.subject===s.key;}).reduce(function(a,b){return a+b.minutes;},0);}),backgroundColor:s.c+‘88’,borderRadius:3};})},
+options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:’#5a7a8a’,font:{size:9},boxWidth:8}}},scales:{x:{stacked:true,ticks:{color:’#5a7a8a’,font:{size:8}},grid:{display:false}},y:{stacked:true,ticks:{color:’#5a7a8a’,font:{size:8}},grid:{color:’#1e2d3d’}}}}
 });
 
-// Weak topics mini list
-const allTopics = [];
-S.forEach(s=>{ d.topics[s.key].filter(t=>!t.done).forEach(t=>allTopics.push({…t,subject:s})); });
-allTopics.sort((a,b)=>(b.count||1)-(a.count||1));
-const top5 = allTopics.slice(0,5);
-document.getElementById(‘d-weaklist’).innerHTML = top5.length
-? top5.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)"> <span style="width:8px;height:8px;border-radius:50%;background:${t.subject.color};flex-shrink:0;display:inline-block"></span> <span style="font-size:0.82rem;flex:1">${t.text}</span> <span style="font-size:0.7rem;color:${t.subject.color};font-weight:700">${t.count||1}x</span> </div>`).join(’’)
-: ‘<div class="empty" style="padding:20px"><p>Konu eklenmedi</p></div>’;
+var all=[];
+S.forEach(function(s){d.topics[s.key].filter(function(t){return !t.done;}).forEach(function(t){all.push(Object.assign({},t,{s:s}));});});
+all.sort(function(a,b){return (b.count||1)-(a.count||1);});
+var top=all.slice(0,5);
+document.getElementById(‘d-weaklist’).innerHTML=top.length
+?top.map(function(t){return ‘<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)"><span style="width:7px;height:7px;border-radius:50%;background:'+t.s.c+';flex-shrink:0;display:inline-block"></span><span style="font-size:.82rem;flex:1">’+t.text+’</span><span style="font-size:.7rem;font-weight:700;color:'+t.s.c+'">’+(t.count||1)+‘x</span></div>’;}).join(’’)
+:’<div class="empty" style="padding:16px;font-size:.8rem"><p>Henüz konu yok</p></div>’;
 }
 
-// ── KONULAR ──────────────────────────────────────────────────────────────────
 function renderKonular(){
-const d = load();
-const el = document.getElementById(‘konular-content’);
-el.innerHTML = S.map(s=>`<div style="margin-bottom:20px"> <div style="font-size:0.65rem;letter-spacing:0.12em;color:${s.color};text-transform:uppercase;font-weight:700;margin-bottom:10px">${s.label}</div> <div id="topics-${s.key}"></div> <div style="display:flex;gap:8px;margin-top:8px"> <input type="text" id="topic-input-${s.key}" placeholder="Yeni konu ekle..." style="flex:1"> <button class="btn btn-ghost" onclick="addTopic('${s.key}')" style="padding:8px 14px;font-size:0.8rem;border-color:${s.color};color:${s.color}">+ Ekle</button> </div> </div>`).join(’’);
-S.forEach(s=>renderTopicList(s.key));
+document.getElementById(‘konular-wrap’).innerHTML=S.map(function(s){return ` <div style="margin-bottom:20px"> <div style="font-size:.65rem;letter-spacing:.1em;color:${s.c};text-transform:uppercase;font-weight:700;margin-bottom:10px">${s.label}</div> <div id="tlist-${s.key}"></div> <div class="add-row"> <input type="text" id="tinp-${s.key}" placeholder="Konu ekle..."> <button class="add-btn" style="color:${s.c}" onclick="addTopic('${s.key}')">+ Ekle</button> </div> </div>`;}).join(’’);
+S.forEach(function(s){renderTopics(s.key);});
 }
 
-function renderTopicList(key){
-const d = load();
-const s = S.find(x=>x.key===key);
-const el = document.getElementById(`topics-${key}`);
-if(!el) return;
-const topics = […d.topics[key]].sort((a,b)=>(b.count||1)-(a.count||1));
-if(!topics.length){ el.innerHTML=`<div class="empty" style="padding:16px"><p>Henüz konu yok</p></div>`; return; }
-el.innerHTML = topics.map((t,i)=>`<div class="topic-item ${t.done?'done':''}" style="--color:${s.color};--color-dim:${s.dim}" onclick="toggleTopic('${key}',${i})"> <span class="topic-count" style="background:${s.color}15;color:${s.color}">${t.count||1}x</span> <span class="topic-name">${t.text}</span> <span class="topic-check">${t.done?'✓':''}</span> <button class="btn btn-danger" onclick="event.stopPropagation();deleteTopic('${key}',${i})" style="padding:3px 8px;font-size:0.65rem">✕</button> </div>`).join(’’);
+function renderTopics(k){
+var d=ld();var s=S.find(function(x){return x.key===k;});
+var el=document.getElementById(‘tlist-’+k);if(!el)return;
+var sorted=[…d.topics[k]].sort(function(a,b){return (b.count||1)-(a.count||1);});
+el.innerHTML=sorted.length
+?sorted.map(function(t,i){return ‘<div class="topic-item'+(t.done?' done':'')+'" style="--c:'+s.c+'" onclick="toggleT(\''+k+'\','+i+')"><span class="t-cnt" style="background:'+s.c+'18;color:'+s.c+'">’+(t.count||1)+‘x</span><span class="t-name">’+t.text+’</span><span>’+(t.done?‘✓’:’’)+’</span><button class="btn-d" onclick="event.stopPropagation();deleteT(\''+k+'\','+i+')">✕</button></div>’;}).join(’’)
+:’<div class="empty" style="padding:14px"><p>Henüz konu yok</p></div>’;
 }
 
-function addTopic(key){
-const inp = document.getElementById(`topic-input-${key}`);
-const text = inp.value.trim();
-if(!text) return;
-const d = load();
-const existing = d.topics[key].find(t=>t.text.toLowerCase()===text.toLowerCase());
-if(existing){ existing.count=(existing.count||1)+1; }
-else{ d.topics[key].push({text,count:1,done:false,id:Date.now()}); }
-inp.value=’’;
-save(d);
-renderTopicList(key);
+function addTopic(k){
+var inp=document.getElementById(‘tinp-’+k);var text=inp.value.trim();if(!text)return;
+var d=ld();var ex=d.topics[k].find(function(t){return t.text.toLowerCase()===text.toLowerCase();});
+if(ex){ex.count=(ex.count||1)+1;}else{d.topics[k].push({text:text,count:1,done:false,id:Date.now()});}
+inp.value=’’;sv(d);renderTopics(k);
 }
 
-function toggleTopic(key,idx){
-const d = load();
-const sorted = […d.topics[key]].sort((a,b)=>(b.count||1)-(a.count||1));
-const item = sorted[idx];
-const orig = d.topics[key].find(t=>t.id===item.id);
-if(orig) orig.done = !orig.done;
-save(d);
-renderTopicList(key);
+function toggleT(k,i){
+var d=ld();var sorted=[…d.topics[k]].sort(function(a,b){return (b.count||1)-(a.count||1);});
+var item=d.topics[k].find(function(t){return t.id===sorted[i].id;});
+if(item)item.done=!item.done;sv(d);renderTopics(k);
 }
 
-function deleteTopic(key,idx){
-const d = load();
-const sorted = […d.topics[key]].sort((a,b)=>(b.count||1)-(a.count||1));
-const item = sorted[idx];
-d.topics[key] = d.topics[key].filter(t=>t.id!==item.id);
-save(d);
-renderTopicList(key);
+function deleteT(k,i){
+var d=ld();var sorted=[…d.topics[k]].sort(function(a,b){return (b.count||1)-(a.count||1);});
+d.topics[k]=d.topics[k].filter(function(t){return t.id!==sorted[i].id;});
+sv(d);renderTopics(k);
 }
 
-// ── HEDEFLER ────────────────────────────────────────────────────────────────
 function renderHedef(){
-const d = load();
-const entries = d.entries;
-document.getElementById(‘goals-display’).innerHTML = S.map(s=>{
-const nets = entries.map(e=>e[s.key]?.net).filter(n=>n!=null);
-const lastNet = nets.length ? nets[nets.length-1] : 0;
-const goal = d.goals[s.key]||0;
-const pct = goal>0 ? Math.min(100,Math.round((lastNet/goal)*100)) : 0;
-const diff = (goal - lastNet).toFixed(1);
-return `<div class="goal-item" style="--color:${s.color}"> <div class="goal-header"> <span class="goal-subject">${s.label}</span> <span class="goal-nums">Son: <span>${lastNet?lastNet.toFixed(1):'—'}</span> / Hedef: <span>${goal}</span></span> </div> <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%;background:${s.color}"></div></div> <div class="goal-status">${pct>=100?'🎉 Hedefe ulaştın!':lastNet?`Hedefe ${diff} net kaldı (%${pct})`:'Henüz deneme yok'}</div> </div>`;
+var d=ld();
+document.getElementById(‘goals-display’).innerHTML=S.map(function(s){
+var nets=d.entries.map(function(e){return e[s.key]?e[s.key].net:null;}).filter(function(n){return n!=null;});
+var ln=nets.length?nets[nets.length-1]:0;
+var g=d.goals[s.key]||0;
+var pct=g>0?Math.min(100,Math.round(ln/g*100)):0;
+return ‘<div class="goal-item" style="--c:'+s.c+'"><div class="goal-head"><span class="goal-subj">’+s.label+’</span><span class="goal-nums">Son: <b>’+(ln?ln.toFixed(1):’—’)+’</b> / Hedef: <b>’+g+’</b></span></div><div class="gbar-track"><div class="gbar-fill" style="width:'+pct+'%;background:'+s.c+'"></div></div><div class="goal-status">’+(pct>=100?‘🎉 Hedefe ulaştın!’:ln?‘Hedefe ‘+(g-ln).toFixed(1)+’ net kaldı (%’+pct+’)’:‘Henüz deneme yok’)+’</div></div>’;
 }).join(’’);
 }
 
 function saveGoals(){
-const d = load();
-S.forEach(s=>{ d.goals[s.key] = +document.getElementById(`goal-${s.key}`).value||0; });
-save(d);
-toast(‘✓ Hedefler kaydedildi!’);
-renderHedef();
+var d=ld();
+S.forEach(function(s){d.goals[s.key]=+(document.getElementById(‘goal-’+s.key).value)||0;});
+sv(d);toast(‘✓ Hedefler kaydedildi!’);renderHedef();
 }
 
-// ── ÇALIŞMA ──────────────────────────────────────────────────────────────────
 function renderCalisma(){
-const d = load();
-// Totals
-document.getElementById(‘study-totals’).innerHTML = S.map(s=>{
-const total = d.study.filter(x=>x.subject===s.key).reduce((a,b)=>a+b.minutes,0);
-const h = Math.floor(total/60), m = total%60;
-return `<div class="study-card" style="--color:${s.color}"> <div class="study-subject">${s.label}</div> <div class="study-total">${h>0?h+'s ':''}</div> <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:${s.color};line-height:1">${h>0?h+'s ':''}<span style="font-size:1.2rem">${m}dk</span></div> <div class="study-unit">Toplam</div> </div>`;
+var d=ld();
+document.getElementById(‘study-totals’).innerHTML=S.map(function(s){
+var tot=d.study.filter(function(x){return x.subject===s.key;}).reduce(function(a,b){return a+b.minutes;},0);
+var h=Math.floor(tot/60),m=tot%60;
+return ‘<div class="st-card" style="--c:'+s.c+'"><div class="st-subj">’+s.label+’</div><div class="st-total">’+(h>0?h+‘s ‘:’’)+m+‘dk</div><div class="st-unit">Toplam</div></div>’;
 }).join(’’);
-
-// Chart
-if(charts.study) charts.study.destroy();
-const last14 = getLast14Dates();
-const ctx = document.getElementById(‘study-chart’);
-charts.study = new Chart(ctx,{
+if(CH.s14)CH.s14.destroy();
+var l14=last14();
+CH.s14=new Chart(document.getElementById(‘c-study14’),{
 type:‘bar’,
-data:{
-labels:last14.map(fmtDate),
-datasets:S.map(s=>({
-label:s.label,
-data:last14.map(dt=>d.study.filter(x=>x.date===dt&&x.subject===s.key).reduce((a,b)=>a+b.minutes,0)),
-backgroundColor:s.color+‘88’,borderRadius:4,
-}))
-},
-options:{
-responsive:true,maintainAspectRatio:false,
-plugins:{legend:{labels:{color:’#436070’,font:{size:10,family:‘Karla’}}}},
-scales:{
-x:{stacked:true,ticks:{color:’#436070’,font:{size:9}},grid:{display:false}},
-y:{stacked:true,ticks:{color:’#436070’,font:{size:9},callback:v=>v+‘dk’},grid:{color:’#1e2d3d’}}
-}
-}
+data:{labels:l14.map(fmtD),datasets:S.map(function(s){return{label:s.label,data:l14.map(function(dt){return d.study.filter(function(x){return x.date===dt&&x.subject===s.key;}).reduce(function(a,b){return a+b.minutes;},0);}),backgroundColor:s.c+‘88’,borderRadius:4};})},
+options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:’#5a7a8a’,font:{size:10},boxWidth:10}}},scales:{x:{stacked:true,ticks:{color:’#5a7a8a’,font:{size:9}},grid:{display:false}},y:{stacked:true,ticks:{color:’#5a7a8a’,font:{size:9},callback:function(v){return v+‘dk’;}},grid:{color:’#1e2d3d’}}}}
 });
 }
 
-// ── GEÇMİŞ ──────────────────────────────────────────────────────────────────
 function renderGecmis(){
-const d = load();
-const entries = […d.entries].reverse();
-const el = document.getElementById(‘history-table’);
-if(!entries.length){ el.innerHTML=’<div class="empty"><div class="empty-icon">📭</div><p>Deneme kaydı yok</p></div>’; return; }
-
-el.innerHTML = `<table> <thead><tr> <th>Tarih</th> ${S.map(s=>`<th style="color:${s.color}">${s.short}</th>`).join('')} <th>Toplam</th><th>Yanlış Konular</th><th></th> </tr></thead> <tbody> ${entries.map(e=>{ const total = S.reduce((acc,s)=>acc+(e[s.key]?.net||0),0); const pillCls = total>=85?'pill-good':total>=60?'pill-ok':'pill-bad'; const wrongs = S.map(s=>{ const w = e[s.key]?.wrong; return w ? `<span style="color:${s.color};font-size:0.72rem">${s.short}: ${w}</span>`: ''; }).filter(Boolean).join(' · '); return`<tr>
-<td><span style="font-size:0.8rem">${fmtDate(e.date)}</span>${e.name?`<br><span style="font-size:0.7rem;color:var(--muted)">${e.name}</span>`:’’}</td>
-${S.map(s=>{
-const net = e[s.key]?.net;
-const c = net>=s.max*0.7?’#3ddc97’:net>=s.max*0.4?’#ffb340’:’#ff5c6a’;
-return `<td><span class="pill" style="background:${c}18;color:${c}">${net!=null?net.toFixed(1):'—'}</span></td>`;
-}).join(’’)}
-<td><span class="pill ${pillCls}">${total.toFixed(1)}</span></td>
-<td style="max-width:160px;font-size:0.72rem;color:var(--muted)">${wrongs||’—’}</td>
-<td><button class="btn btn-danger" onclick="deleteEntry(${e.id})">✕</button></td>
-</tr>`;
-}).join(’’)}
-</tbody>
-
-  </table>`;
+var d=ld();var E=[…d.entries].reverse();var el=document.getElementById(‘hist-tbl’);
+if(!E.length){el.innerHTML=’<div class="empty"><div class="empty-icon">📭</div><p>Henüz deneme yok</p></div>’;return;}
+el.innerHTML=’<table><thead><tr><th>Tarih</th>’+S.map(function(s){return ‘<th style="color:'+s.c+'">’+s.short+’</th>’;}).join(’’)+’<th>Top.</th><th></th></tr></thead><tbody>’+E.map(function(e){
+var tot=S.reduce(function(a,s){return a+(e[s.key]?e[s.key].net:0);},0);
+var pc=tot>=85?’#3ddc97’:tot>=60?’#ffb340’:’#ff5c6a’;
+return ‘<tr><td><div style="font-size:.78rem">’+fmtD(e.date)+’</div>’+(e.name?’<div style="font-size:.68rem;color:var(--muted)">’+e.name+’</div>’:’’)+’</td>’+S.map(function(s){var n=e[s.key]?e[s.key].net:null;var c=n>=s.max*.7?’#3ddc97’:n>=s.max*.4?’#ffb340’:’#ff5c6a’;return ‘<td><span class="pill" style="background:'+c+'18;color:'+c+'">’+(n!=null?n.toFixed(1):’—’)+’</span></td>’;}).join(’’)+’<td><span class="pill" style="background:'+pc+'18;color:'+pc+'">’+tot.toFixed(1)+’</span></td><td><button class="btn-d" onclick="delEntry('+e.id+')">✕</button></td></tr>’;
+}).join(’’)+’</tbody></table>’;
 }
 
-function deleteEntry(id){
-const d = load();
-d.entries = d.entries.filter(e=>e.id!==id);
-save(d);
-renderGecmis();
-renderDash();
-toast(‘Kayıt silindi’);
-}
+function delEntry(id){var d=ld();d.entries=d.entries.filter(function(e){return e.id!==id;});sv(d);renderGecmis();toast(‘Silindi’);}
 
-// ── HELPERS ──────────────────────────────────────────────────────────────────
-function fmtDate(dt){
-const d = new Date(dt+‘T12:00:00’);
-return d.toLocaleDateString(‘tr-TR’,{day:‘2-digit’,month:‘short’});
-}
+function cOpts(){return{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:’#5a7a8a’,font:{size:10},boxWidth:10}}},scales:{x:{ticks:{color:’#5a7a8a’,font:{size:9}},grid:{color:’#1e2d3d’}},y:{min:0,ticks:{color:’#5a7a8a’,font:{size:9}},grid:{color:’#1e2d3d’}}}};}
+function fmtD(dt){return new Date(dt+‘T12:00:00’).toLocaleDateString(‘tr-TR’,{day:‘2-digit’,month:‘short’});}
+function last7(){var a=[];for(var i=6;i>=0;i–){var d=new Date();d.setDate(d.getDate()-i);a.push(d.toISOString().split(‘T’)[0]);}return a;}
+function last14(){var a=[];for(var i=13;i>=0;i–){var d=new Date();d.setDate(d.getDate()-i);a.push(d.toISOString().split(‘T’)[0]);}return a;}
 
-function getLast7Dates(){
-const dates=[];
-for(let i=6;i>=0;i–){
-const d=new Date(); d.setDate(d.getDate()-i);
-dates.push(d.toISOString().split(‘T’)[0]);
-}
-return dates;
-}
+function toast(msg){var el=document.getElementById(‘toast’);el.textContent=msg;el.classList.add(‘show’);setTimeout(function(){el.classList.remove(‘show’);},2200);}
+function confetti(){var cols=[’#3ddc97’,’#ff5c6a’,’#ffb340’,’#58b4ff’,’#fff’];for(var i=0;i<35;i++){(function(i){setTimeout(function(){var el=document.createElement(‘div’);el.className=‘confetti-p’;el.style.cssText=‘left:’+Math.random()*100+‘vw;top:-10px;background:’+cols[Math.floor(Math.random()*cols.length)]+’;animation-duration:’+(1+Math.random())+‘s’;document.body.appendChild(el);setTimeout(function(){el.remove();},1800);},i*45);})(i);}}
 
-function getLast14Dates(){
-const dates=[];
-for(let i=13;i>=0;i–){
-const d=new Date(); d.setDate(d.getDate()-i);
-dates.push(d.toISOString().split(‘T’)[0]);
-}
-return dates;
-}
-
-function toast(msg){
-const el=document.getElementById(‘toast’);
-el.textContent=msg; el.classList.add(‘show’);
-setTimeout(()=>el.classList.remove(‘show’),2200);
-}
-
-function confetti(){
-const colors=[’#3ddc97’,’#ff5c6a’,’#ffb340’,’#58b4ff’,’#fff’];
-for(let i=0;i<40;i++){
-setTimeout(()=>{
-const el=document.createElement(‘div’);
-el.className=‘confetti-piece’;
-el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1+Math.random()}s;transform:rotate(${Math.random()*360}deg)`;
-document.body.appendChild(el);
-setTimeout(()=>el.remove(),2000);
-},i*40);
-}
-toast(‘🎉 Hedefe ulaştın!’);
-}
-
-// ── INIT ─────────────────────────────────────────────────────────────────────
 buildForms();
 renderDash();
 </script>
